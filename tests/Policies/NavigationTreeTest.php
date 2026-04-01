@@ -23,7 +23,7 @@ class NavigationTreeTest extends TestCase
     }
 
     #[Test]
-    public function before_falls_back_to_the_parent_policy_without_the_veto_permission(): void
+    public function before_falls_back_to_the_parent_policy(): void
     {
         $policy = app(NavigationTreePolicy::class);
 
