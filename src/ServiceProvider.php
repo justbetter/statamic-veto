@@ -2,10 +2,15 @@
 
 namespace JustBetter\Veto;
 
+use JustBetter\Veto\Policies\Asset;
+use JustBetter\Veto\Policies\AssetContainer;
+use JustBetter\Veto\Policies\AssetFolder;
 use JustBetter\Veto\Policies\Collection;
 use JustBetter\Veto\Policies\Entry;
 use JustBetter\Veto\Policies\GlobalSet;
 use JustBetter\Veto\Policies\GlobalSetVariables;
+use JustBetter\Veto\Policies\Navigation;
+use JustBetter\Veto\Policies\NavigationTree;
 use JustBetter\Veto\Policies\Taxonomy;
 use JustBetter\Veto\Policies\Term;
 use Statamic\Auth\Permission;
@@ -27,6 +32,11 @@ class ServiceProvider extends AddonServiceProvider
         Entry::bind();
         GlobalSet::bind();
         GlobalSetVariables::bind();
+        Navigation::bind();
+        NavigationTree::bind();
+        AssetContainer::bind();
+        AssetFolder::bind();
+        Asset::bind();
 
         Taxonomy::bind();
         Term::bind();
@@ -39,7 +49,9 @@ class ServiceProvider extends AddonServiceProvider
         $this
             ->bootGlobalSetVariablesPermission()
             ->bootEntryPermission()
-            ->bootTermPermission();
+            ->bootTermPermission()
+            ->bootNavigationPermission()
+            ->bootAssetContainerPermission();
     }
 
     protected function bootGlobalSetVariablesPermission(): static
@@ -81,6 +93,36 @@ class ServiceProvider extends AddonServiceProvider
                 $permission
                     ->label('Edit all taxonomy terms')
                     ->description(__('👑 Veto the ability to let this role edit all taxonomy terms.'));
+            });
+        });
+
+        return $this;
+    }
+
+    protected function bootNavigationPermission(): static
+    {
+        // @phpstan-ignore-next-line argument.type
+        PermissionFacade::group('navigation', function (): void {
+            $permission = config()->string('statamic-veto.permissions.nav');
+            PermissionFacade::register($permission, function (Permission $permission): void {
+                $permission
+                    ->label('Edit all navigation')
+                    ->description(__('👑 Veto the ability to let this role edit all navigation.'));
+            });
+        });
+
+        return $this;
+    }
+
+    protected function bootAssetContainerPermission(): static
+    {
+        // @phpstan-ignore-next-line argument.type
+        PermissionFacade::group('assets', function (): void {
+            $permission = config()->string('statamic-veto.permissions.asset');
+            PermissionFacade::register($permission, function (Permission $permission): void {
+                $permission
+                    ->label('Edit all asset containers')
+                    ->description(__('👑 Veto the ability to let this role edit all assets.'));
             });
         });
 

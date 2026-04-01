@@ -35,14 +35,22 @@ class TestCase extends AddonTestCase
 
     protected function setUpUser(string $permission): User
     {
+        $user = $this->makeUser();
+
         $role = Role::make('::role::')->save();
         $role->addPermission($permission)->save();
+        $user->assignRole($role);
+
+        return $user;
+    }
+
+    protected function makeUser(): User
+    {
         /** @var User $user */
         $user = UserFacade::make();
         $user->data([
             'email' => 'example@example.com',
         ])->save();
-        $user->assignRole($role);
 
         return $user;
     }
