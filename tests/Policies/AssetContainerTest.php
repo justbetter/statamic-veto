@@ -11,7 +11,7 @@ use Statamic\Facades\AssetContainer as AssetContainerFacade;
 class AssetContainerTest extends TestCase
 {
     #[Test]
-    public function a_user_with_the_asset_veto_permission_can_manage_asset_containers(): void
+    public function a_user_with_the_asset_veto_permission_can_manage_asset_containers_except_deleting_them(): void
     {
         $user = $this->setUpUser(config()->string('statamic-veto.permissions.asset'));
         $container = AssetContainerFacade::make('test')->title('Test');
@@ -21,6 +21,15 @@ class AssetContainerTest extends TestCase
         $this->assertTrue(Gate::forUser($user)->check('view', $container));
         $this->assertTrue(Gate::forUser($user)->check('edit', $container));
         $this->assertTrue(Gate::forUser($user)->check('update', $container));
+        $this->assertFalse(Gate::forUser($user)->check('delete', $container));
+    }
+
+    #[Test]
+    public function a_super_user_can_delete_asset_containers(): void
+    {
+        $user = $this->makeUser()->makeSuper();
+        $container = AssetContainerFacade::make('test')->title('Test');
+
         $this->assertTrue(Gate::forUser($user)->check('delete', $container));
     }
 
