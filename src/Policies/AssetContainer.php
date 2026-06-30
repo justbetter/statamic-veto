@@ -15,6 +15,13 @@ class AssetContainer extends AssetContainerPolicy
      */
     public function before($user, $ability): ?bool
     {
+        /** @var User $user */
+        $user = UserFacade::fromUser($user);
+
+        if ($ability === 'delete') {
+            return $user->isSuper();
+        }
+
         if ($this->can($user)) {
             return true;
         }
