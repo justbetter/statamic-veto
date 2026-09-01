@@ -59,6 +59,28 @@ class Entry extends EntryPolicy
         return $user !== null && ($this->can($user) || parent::store($user, $collection, $site));
     }
 
+    /**
+     * @param  User|Model  $user
+     * @param  StatamicEntry  $entry
+     */
+    public function delete($user, $entry): bool
+    {
+        $user = UserFacade::fromUser($user);
+
+        return $user !== null && ($this->can($user) || parent::delete($user, $entry));
+    }
+
+    /**
+     * @param  User|Model  $user
+     * @param  StatamicEntry  $entry
+     */
+    public function publish($user, $entry): bool
+    {
+        $user = UserFacade::fromUser($user);
+
+        return $user !== null && ($this->can($user) || parent::publish($user, $entry));
+    }
+
     protected function can(UserContract $user): bool
     {
         $permission = config()->string('statamic-veto.permissions.entry');

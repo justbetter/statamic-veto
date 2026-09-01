@@ -99,4 +99,44 @@ class EntryTest extends TestCase
 
         $this->assertTrue($policy->store($user, $collection));
     }
+
+    #[Test]
+    public function a_user_can_delete(): void
+    {
+        $permission = config()->string('statamic-veto.permissions.entry');
+        $user = $this->setupUser($permission);
+
+        /** @var Collection $collection */
+        $collection = CollectionFacade::make('test');
+        $collection->save();
+
+        /** @var StatamicEntry $entry */
+        $entry = EntryFacade::make();
+        $entry->collection($collection);
+        $entry->saveQuietly();
+
+        $policy = app(Entry::class);
+
+        $this->assertTrue($policy->delete($user, $entry));
+    }
+
+    #[Test]
+    public function a_user_can_publish(): void
+    {
+        $permission = config()->string('statamic-veto.permissions.entry');
+        $user = $this->setupUser($permission);
+
+        /** @var Collection $collection */
+        $collection = CollectionFacade::make('test');
+        $collection->save();
+
+        /** @var StatamicEntry $entry */
+        $entry = EntryFacade::make();
+        $entry->collection($collection);
+        $entry->saveQuietly();
+
+        $policy = app(Entry::class);
+
+        $this->assertTrue($policy->publish($user, $entry));
+    }
 }
